@@ -25,6 +25,7 @@ app.use(express.static(__dirname + '/public'));
 app.use(morgan('dev'));
 
 load('model')
+    .then('repository')
     .then('services')
     .then('controllers')
     .then('routes')

@@ -1,45 +1,56 @@
 'use strict';
 
 module.exports = function (app) {
-    var userService = app.services.user;
-    var productService = app.services.product;
-    var ratedService = app.services.rated;
+    var recommendationService = app.services.recommendation;
 
     var recommendationController = {
         add: add,
-        get: get
+        get: get,
+        getRelationship : getRelationship
     }
 
     function add(req, res) {
 
-        var recommendation = {
+        var reco = {
             user: req.body.user,
             rated: req.body.rated,
             product: req.body.product
         }
 
-        userService.getOrAdd(recommendation.user)
-            .then(function(node_user){
-                console.log("node_user",node_user);
-                productService.getOrAdd(recommendation.product)
-                    .then(function(node_product){
-                        console.log("node_product",node_product);
-                        ratedService.add(node_user,node_product,recommendation.rated)
-                            .then(function(rated){
-                                res.status(201).json(rated);
-                            })
-                    });
+        recommendationService.add(reco)
+            .then(function (rated) {
+                res.status(201).json(rated);
+            }, function (err) {
+                res.status(500).json({});
             });
     }
 
 
     function get(req, res) {
-        userService.get({ cpf: req.query.document })
+
+        var user = {
+            cpf: req.query.document
+        }
+
+        recommendationService.get(user)
             .then(function (node) {
                 res.status(200).json(node);
             }, function (err) {
                 res.status(500).json({});
             });
+    }
+
+    function getRelationship(req,res){
+        var node_id_user = req.query.userId;
+        var node_id_product = req.query.productId;
+
+        recommendationService.getRelationship(node_id_user,node_id_product)
+            .then(function(node){
+                res.status(200).json(node);
+            },function(err){
+                res.status(500).json({err : err});
+            });
+
     }
 
     return recommendationController;

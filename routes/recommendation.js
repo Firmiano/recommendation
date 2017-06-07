@@ -6,4 +6,7 @@ module.exports = function(app) {
     app.route('/api/recommendation')
         .post(recommendationController.add)
         .get(recommendationController.get);
+    
+    app.route('/api/relationship')
+        .get(recommendationController.getRelationship);
 };
