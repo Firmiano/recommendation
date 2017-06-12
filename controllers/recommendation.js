@@ -1,7 +1,6 @@
-'use strict';
-
-module.exports = function (app) {
+module.exports = function(app) {
     var recommendationService = app.services.recommendation;
+    var validation = app.validation.recommendation;
 
     var recommendationController = {
         add: add,
@@ -10,17 +9,17 @@ module.exports = function (app) {
 
     function add(req, res) {
 
-        var reco = {
-            user: req.body.user,
-            rated: req.body.rated,
-            product: req.body.product
-        }
+        validation.add(req.body)
+            .then(function(result) {
+                recommendationService.add(result)
+                    .then(function(rated) {
+                        res.status(201).json(rated);
+                    }, function(err) {
+                        res.status(500).json({});
+                    });
 
-        recommendationService.add(reco)
-            .then(function (rated) {
-                res.status(201).json(rated);
-            }, function (err) {
-                res.status(500).json({});
+            }, function(errs) {
+                res.status(400).json(errs);
             });
     }
 
@@ -32,12 +31,12 @@ module.exports = function (app) {
         }
 
         recommendationService.get(user)
-            .then(function (node) {
+            .then(function(node) {
                 res.status(200).json(node);
-            }, function (err) {
+            }, function(err) {
                 res.status(500).json({});
             });
     }
-
+    
     return recommendationController;
 }
