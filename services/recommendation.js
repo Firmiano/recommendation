@@ -10,8 +10,7 @@ module.exports = function (app) {
 
     var serviceRecommendation = {
         add: add,
-        get: get,
-        getRelationship : getRelationship
+        get: get
     }
 
     function add(recommendation) {
@@ -20,7 +19,7 @@ module.exports = function (app) {
                 .then(function (node_user) {
                     productGetOrAdd(recommendation.product)
                         .then(function (node_product) {
-                            repRated.add(node_user, node_product, recommendation.rated)
+                            ratedAddOrUpdate(node_user, node_product, recommendation.rated)
                                 .then(function (rated) {
                                     resolve(rated);
                                 }, function (err) {
@@ -36,11 +35,55 @@ module.exports = function (app) {
     }
 
     function get(user) {
-        return repUser.get(user);
+        return repUser.getRecommendation(user);
     }
 
-    function getRelationship(node_id_user,node_id_product){
-        return repRated.get(node_id_user,node_id_product);
+    function ratedAddOrUpdate(node_id_user, node_id_product, rated) {
+        return new Promise(function (resolve, reject) {
+            repRated.get(node_id_user, node_id_product)
+                .then(function (node) {
+                    if (node && node.data.length > 0) {
+
+                        if(rated.valor + 1 < node.data[0][1].valor){
+                            resolve(true);
+                            return
+                        }
+
+                        if (rated.valor === 3 && node.data[0][1].valor === 5) {
+                            resolve(true);
+                            return;
+                        }
+                        if (rated.valor === 6 && node.data[0][1].valor === 8) {
+                            resolve(true);
+                            return;
+                        }
+                        if (rated.valor < 6 && node.data[0][1].valor < 5) {
+                            node.data[0][1].valor++;
+                            rated.valor = node.data[0][1].valor;
+                        } else if (rated.valor < 9 && node.data[0][1].valor >= 6 && node.data[0][1].valor < 8) {
+                            node.data[0][1].valor++;
+                            rated.valor = node.data[0][1].valor;
+                        }
+
+                        repRated.update(node.data[0][1]._id, rated)
+                            .then(function (node) {
+                                resolve(node);
+                            }, function (err) {
+                                reject(err);
+                            });
+
+                    } else {
+                        repRated.add(node_id_user, node_id_product, rated)
+                            .then(function (node) {
+                                resolve(true);
+                            }, function (err) {
+                                reject(err);
+                            });
+                    }
+                }, function (err) {
+                    reject(err);
+                });
+        });
     }
 
     function userGetOrAdd(user) {

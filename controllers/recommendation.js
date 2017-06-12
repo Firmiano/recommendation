@@ -5,8 +5,7 @@ module.exports = function (app) {
 
     var recommendationController = {
         add: add,
-        get: get,
-        getRelationship : getRelationship
+        get: get
     }
 
     function add(req, res) {
@@ -29,7 +28,7 @@ module.exports = function (app) {
     function get(req, res) {
 
         var user = {
-            cpf: req.query.document
+            cpf: req.query.cpf
         }
 
         recommendationService.get(user)
@@ -38,19 +37,6 @@ module.exports = function (app) {
             }, function (err) {
                 res.status(500).json({});
             });
-    }
-
-    function getRelationship(req,res){
-        var node_id_user = req.query.userId;
-        var node_id_product = req.query.productId;
-
-        recommendationService.getRelationship(node_id_user,node_id_product)
-            .then(function(node){
-                res.status(200).json(node);
-            },function(err){
-                res.status(500).json({err : err});
-            });
-
     }
 
     return recommendationController;

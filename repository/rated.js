@@ -6,7 +6,8 @@ module.exports = function(app){
 
     var repositoryRated = {
         add : add,
-        get : get
+        get : get,
+        update : update
     }   
 
     function add(node_id_user,node_id_product,rated){
@@ -22,6 +23,15 @@ module.exports = function(app){
         return new Promise(function(resolve, reject){
             var query = "MATCH p=(u:User)-[r:Rated]->(pd:Product) WHERE id(u)= "+node_id_user+" and id(pd)= " + node_id_product + " RETURN u,r,pd LIMIT 1"
             contextNeo4j.cypherQuery(query,function(err, node){
+                if(err) reject(err);
+                    resolve(node);
+            });
+        });
+    }
+
+    function update(node_id_rated, rated){
+        return new Promise(function(resolve,reject){
+            contextNeo4j.updateRelationship(node_id_rated,rated,function(err,node){
                 if(err) reject(err);
                     resolve(node);
             });

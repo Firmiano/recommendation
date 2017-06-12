@@ -13,7 +13,7 @@
     "express-session": "*",
     "method-override": "*",
     "morgan": "^1.8.1",
-    "request": "^2.81.0",
-    "node-neo4j": "^2.0.3"
+    "node-neo4j": "^2.0.3",
+    "request": "^2.81.0"
   }
 }
