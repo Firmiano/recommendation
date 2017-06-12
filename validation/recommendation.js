@@ -2,7 +2,7 @@
 
 var Joi = require('Joi');
 
-module.exports = function(app) {
+module.exports = function (app) {
 
     var user = app.model.user;
     var product = app.model.product;
@@ -15,7 +15,7 @@ module.exports = function(app) {
     }
 
     function add(body) {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             var errs = [];
             var result = {
                 user: null,
@@ -67,8 +67,34 @@ module.exports = function(app) {
         });
     }
 
-    function get() {
-        return true;
+    function get(query) {
+        return new Promise(function (resolve, reject) {
+            var errs = [];
+
+            var body = {
+                user: {
+                    userId: query.userId
+                }
+            };
+
+            if (!body.user.userId || body.user.user === null) {
+                errs.push({ code: 107, message: "UserId can not be null or empty" });
+            }
+
+            var validateUser = Joi.validate(body.user, user);
+
+            if (validateUser.error !== null) {
+                errs.push({ code: 108, message: validateUser.error.message });
+            } else {
+                result.user = validateUser.value;
+            }
+
+            if (errs.length > 0)
+                reject(errs);
+
+            resolve(result);
+
+        });
     }
 
     return validateRecommendation;

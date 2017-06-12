@@ -3,5 +3,5 @@
 var Joi = require('joi');
 
 module.exports = Joi.object().keys({
-    cpf: Joi.string().required()
+    userId: Joi.number().integer().min(1).empty().required()
 });

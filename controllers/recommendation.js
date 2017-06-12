@@ -1,4 +1,4 @@
-module.exports = function(app) {
+module.exports = function (app) {
     var recommendationService = app.services.recommendation;
     var validation = app.validation.recommendation;
 
@@ -10,15 +10,15 @@ module.exports = function(app) {
     function add(req, res) {
 
         validation.add(req.body)
-            .then(function(result) {
+            .then(function (result) {
                 recommendationService.add(result)
-                    .then(function(rated) {
+                    .then(function (rated) {
                         res.status(201).json(rated);
-                    }, function(err) {
+                    }, function (err) {
                         res.status(500).json({});
                     });
 
-            }, function(errs) {
+            }, function (errs) {
                 res.status(400).json(errs);
             });
     }
@@ -26,17 +26,18 @@ module.exports = function(app) {
 
     function get(req, res) {
 
-        var user = {
-            cpf: req.query.cpf
-        }
-
-        recommendationService.get(user)
-            .then(function(node) {
-                res.status(200).json(node);
-            }, function(err) {
-                res.status(500).json({});
+        validation.get(req.query)
+            .then(function (result) {
+                recommendationService.get(result)
+                    .then(function (node) {
+                        res.status(200).json(node);
+                    }, function (err) {
+                        res.status(500).json({});
+                    });
+            }, function (errs) {
+                res.status(400).json(errs);
             });
     }
-    
+
     return recommendationController;
 }

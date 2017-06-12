@@ -3,7 +3,7 @@ var contextNeo4j = require("../database/neo4j")();
 initDataBaseConfig();
 
 function initDataBaseConfig() {
-    createUnique('User', 'cpf');
+    createUnique('User', 'userId');
     createUnique('Product', 'productId');
 }
 

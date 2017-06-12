@@ -37,5 +37,5 @@ load('model')
 console.log(process.env.PORT);
 
 app.listen(process.env.PORT || 4000, function() {
-    console.log("API deposits");
+    console.log("API recommendation");
 });
