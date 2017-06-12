@@ -1,3 +1,5 @@
+'use strict';
+
 var express = require('express'),
     load = require('express-load'),
     bodyParser = require('body-parser'),
@@ -25,6 +27,7 @@ app.use(express.static(__dirname + '/public'));
 app.use(morgan('dev'));
 
 load('model')
+    .then('validation')
     .then('repository')
     .then('services')
     .then('controllers')
