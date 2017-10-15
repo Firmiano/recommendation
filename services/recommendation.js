@@ -42,30 +42,33 @@ module.exports = function (app) {
         return new Promise(function (resolve, reject) {
             repRated.get(node_id_user, node_id_product)
                 .then(function (node) {
-                    if (node && node.data.length > 0) {
+                    if (node && node.records.length > 0) {
 
-                        if(rated.valor + 1 < node.data[0][1].valor){
-                            resolve(true);
-                            return
-                        }
-
-                        if (rated.valor === 3 && node.data[0][1].valor === 5) {
+                        const id = node.records[0]._fields[0].low;
+                        let valor = node.records[0]._fields[1].low;
+                        
+                        if (rated.valor + 1 < valor) {
                             resolve(true);
                             return;
                         }
-                        if (rated.valor === 6 && node.data[0][1].valor === 8) {
+
+                        if (rated.valor === 3 && valor === 5) {
                             resolve(true);
                             return;
                         }
-                        if (rated.valor < 6 && node.data[0][1].valor < 5) {
-                            node.data[0][1].valor++;
-                            rated.valor = node.data[0][1].valor;
-                        } else if (rated.valor < 9 && node.data[0][1].valor >= 6 && node.data[0][1].valor < 8) {
-                            node.data[0][1].valor++;
-                            rated.valor = node.data[0][1].valor;
+                        if (rated.valor === 6 && valor === 8) {
+                            resolve(true);
+                            return;
+                        }
+                        if (rated.valor < 6 && valor < 5) {
+                            valor++;
+                            rated.valor = valor;
+                        } else if (rated.valor < 9 && valor >= 6 && valor < 8) {
+                            valor++;
+                            rated.valor = valor;
                         }
 
-                        repRated.update(node.data[0][1]._id, rated)
+                        repRated.update(id, rated)
                             .then(function (node) {
                                 resolve(node);
                             }, function (err) {
@@ -90,12 +93,12 @@ module.exports = function (app) {
         return new Promise(function (resolve, reject) {
             repUser.get(user)
                 .then(function (node) {
-                    if (node[0]) {
-                        resolve(node[0]._id);
+                    if (node.records.length > 0) {
+                        resolve(node.records[0]._fields[0].low);
                     } else {
                         repUser.add(user)
                             .then(function (node) {
-                                resolve(node._id);
+                                resolve(node.records[0]._fields[0].low);
                             }, function (err) {
                                 reject(err);
                             });
@@ -110,12 +113,12 @@ module.exports = function (app) {
         return new Promise(function (resolve, reject) {
             repProduct.get(product)
                 .then(function (node) {
-                    if (node[0]) {
-                        resolve(node[0]._id);
+                    if (node.records.length > 0) {
+                        resolve(node.records[0]._fields[0].low);
                     } else {
                         repProduct.add(product)
                             .then(function (node) {
-                                resolve(node._id);
+                                resolve(node.records[0]._fields[0].low);
                             }, function (err) {
                                 reject(err);
                             });

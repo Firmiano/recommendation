@@ -8,12 +8,6 @@ function initDataBaseConfig() {
 }
 
 function createUnique(label, prop) {
-    contextNeo4j.createUniquenessContstraint(label, prop, function (err, node) {
-        if (!err) {
-            console.log(node);
-        } else {
-            console.log(err);
-        }
-    });
+    contextNeo4j.run(`CREATE INDEX ON :${label}(${prop})`);
 }
 

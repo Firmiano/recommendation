@@ -10,22 +10,12 @@ module.exports = function(app){
         get : get
     }   
 
-   function add(product) {
-        return new Promise(function (resolve, reject) {
-            contextNeo4j.insertNode(product, ['Product'], function (err, node) {
-                if (err) reject(err);
-                resolve(node);
-            });
-        });
+    function add(product) {
+        return contextNeo4j.run(`CREATE (p:Product {productId: ${product.productId}}) RETURN ID(p)`);
     }
 
-    function get(product){
-        return new Promise(function (resolve,reject){
-            contextNeo4j.readNodesWithLabelsAndProperties('Product',product,function(err, node){
-                if(err) reject(err);
-                resolve(node);
-            })
-        });
+    function get(product) {
+        return contextNeo4j.run(`MATCH (p:Product) WHERE p.productId = ${product.productId} RETURN ID(p)`);
     }
 
     return repositoryProduct;

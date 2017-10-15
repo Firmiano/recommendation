@@ -70,7 +70,12 @@ module.exports = function (app) {
     function get(query) {
         return new Promise(function (resolve, reject) {
             var errs = [];
-
+            var result = {
+                user: null,
+                product: null,
+                rated: null
+            }
+            
             var body = {
                 user: {
                     userId: query.userId

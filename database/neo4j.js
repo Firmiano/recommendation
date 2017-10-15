@@ -1,16 +1,19 @@
 'use strict';
 
-var neo4j = require('node-neo4j');
+var neo4j = require('neo4j-driver').v1;
 
 var single_connection;
 
 module.exports = function () {
 
     if (!single_connection) {
-        single_connection = new neo4j('http://neo4j:firmiano@localhost:7474');
-        console.log('Neo4j conectado!');
+        var driver = neo4j.driver("bolt://localhost:7687", neo4j.auth.basic("neo4j", "firmiano"));
+        single_connection = driver.session();
+
+        return single_connection;
+
+    } else {
         return single_connection;
     }
-    return single_connection;
 };
 

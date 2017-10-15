@@ -28,13 +28,15 @@ module.exports = function (app) {
 
         validation.get(req.query)
             .then(function (result) {
-                recommendationService.get(result)
+                recommendationService.get(result.user)
                     .then(function (node) {
                         res.status(200).json(node);
                     }, function (err) {
+                        console.log(err);
                         res.status(500).json({});
                     });
             }, function (errs) {
+                console.log(errs);
                 res.status(400).json(errs);
             });
     }
